@@ -11,7 +11,7 @@ REPOSITORY_NAME=$(basename "${GITHUB_REPOSITORY}")
 
 if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
-
+	prefix="refs/heads/"
 
 	if [[ "${EVENT_ACTION}" != "opened" ]]; then
 		sonar-scanner \
@@ -25,8 +25,8 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 			-Dsonar.sources=. \
 			-Dsonar.sourceEncoding=UTF-8 \
 			-Dsonar.key=${GITHUB_EVENT_NUMBER} \
-			-Dsonar.branch=${GITHUB_REF}
-
+			-Dsonar.branch=${GITHUB_REF#$prefix} \
+			-Dsonar.pullrequest.base=${BASE_BRANCH}
 	fi
 else
 sonar-scanner \
