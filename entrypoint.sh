@@ -8,10 +8,9 @@ REPOSITORY_NAME=$(basename "${GITHUB_REPOSITORY}")
 [[ -z ${INPUT_PROJECTKEY} ]] && SONAR_PROJECTKEY="${REPOSITORY_NAME}" || SONAR_PROJECTKEY="${INPUT_PROJECTKEY}"
 [[ -z ${INPUT_PROJECTNAME} ]] && SONAR_PROJECTNAME="${REPOSITORY_NAME}" || SONAR_PROJECTNAME="${INPUT_PROJECTNAME}"
 [[ -z ${INPUT_PROJECTVERSION} ]] && SONAR_PROJECTVERSION="" || SONAR_PROJECTVERSION="${INPUT_PROJECTVERSION}"
-
+prefix="refs/heads/"
 if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
-	prefix="refs/heads/"
 
 	if [[ "${EVENT_ACTION}" != "opened" ]]; then
 		sonar-scanner \
@@ -39,7 +38,7 @@ sonar-scanner \
 	-Dsonar.password=${INPUT_PASSWORD} \
 	-Dsonar.sources=. \
 	-Dsonar.sourceEncoding=UTF-8 \
-	-Dsonar.branch.name=${GITHUB_REF}
+	-Dsonar.branch.name=${GITHUB_REF#$prefix}
 
 fi
 
