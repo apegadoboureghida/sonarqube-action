@@ -17,6 +17,7 @@ echo "${GITHUB_EVENT_NAME}"
 echo "${BASE_BRANCH}"
 echo "${GITHUB_EVENT_NUMBER}"
 echo "${GITHUB_HEAD_REF}"
+echo "${GITHUB_BASE_REF}"
 
 if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
@@ -35,11 +36,11 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 			-Dsonar.sources=. \
 			-Dsonar.sourceEncoding=UTF-8 \
 			-Dsonar.key=${GITHUB_EVENT_NUMBER} \
-			-Dsonar.branch.name=${pr_id} \
+			-Dsonar.branch.name=$pr_id \
 			-Dsonar.branch.target=${GITHUB_BASE_REF#$prefix} \
 			-Dsonar.pullrequest.base=${BASE_BRANCH} \
-			-Dsonar.pullrequest.branch=${BASE_BRANCH} \
-			-Dsonar.pullrequest.key=${pr_id}
+			-Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} \
+			-Dsonar.pullrequest.key=$pr_id
 	fi
 else
 sonar-scanner \
