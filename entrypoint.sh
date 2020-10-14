@@ -9,15 +9,21 @@ REPOSITORY_NAME=$(basename "${GITHUB_REPOSITORY}")
 [[ -z ${INPUT_PROJECTNAME} ]] && SONAR_PROJECTNAME="${REPOSITORY_NAME}" || SONAR_PROJECTNAME="${INPUT_PROJECTNAME}"
 [[ -z ${INPUT_PROJECTVERSION} ]] && SONAR_PROJECTVERSION="" || SONAR_PROJECTVERSION="${INPUT_PROJECTVERSION}"
 prefix="refs/heads/"
+pr_prefix="refs/pull/"
+pr_suffix="/merge"
+
 
 echo "${GITHUB_EVENT_NAME}"
 echo "${BASE_BRANCH}"
 echo "${GITHUB_EVENT_NUMBER}"
+echo "${GITHUB_HEAD_REF}"
 
 if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
 
 	if [[ "${EVENT_ACTION}" != "opened" ]]; then
+		pr_id = ${GITHUB_REF#$pr_prefix}
+		pr_id = ${GITHUB_REF%$pr_suffix}
 		sonar-scanner \
 			-Dsonar.host.url=${INPUT_HOST} \
 			-Dsonar.projectKey=${SONAR_PROJECTKEY} \
@@ -29,9 +35,11 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 			-Dsonar.sources=. \
 			-Dsonar.sourceEncoding=UTF-8 \
 			-Dsonar.key=${GITHUB_EVENT_NUMBER} \
-			-Dsonar.branch.name=${GITHUB_REF#$prefix} \
+			-Dsonar.branch.name=${pr_id} \
 			-Dsonar.branch.target=${GITHUB_BASE_REF#$prefix} \
-			-Dsonar.pullrequest.base=${BASE_BRANCH}
+			-Dsonar.pullrequest.base=${BASE_BRANCH} \
+			-Dsonar.pullrequest.branch=${BASE_BRANCH} \
+			-Dsonar.pullrequest.key=${pr_id}
 	fi
 else
 sonar-scanner \
