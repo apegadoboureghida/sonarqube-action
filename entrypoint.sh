@@ -24,6 +24,9 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 
 	if [[ "${EVENT_ACTION}" != "opened" ]]; then
 		echo "pull request opened"
+		echo "ID: ${GITHUB_REF#$pr_prefix%$pr_suffix}"
+		echo "Branch: ${GITHUB_HEAD_REF}"
+		echo "Base: ${GITHUB_BASE_REF}"
 		sonar-scanner \
 			-Dsonar.host.url=${INPUT_HOST} \
 			-Dsonar.projectKey=${SONAR_PROJECTKEY} \
