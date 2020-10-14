@@ -2,14 +2,6 @@
 
 set -e
 
-if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
-	if [[ "${EVENT_ACTION}" != "opened" ]]; then
-		echo "No need to run analysis. It is already triggered by the push event."
-		exit 78
-	fi
-fi
-
 REPOSITORY_NAME=$(basename "${GITHUB_REPOSITORY}")
 
 [[ ! -z ${INPUT_PASSWORD} ]] && SONAR_PASSWORD="${INPUT_PASSWORD}" || SONAR_PASSWORD=""
@@ -17,6 +9,26 @@ REPOSITORY_NAME=$(basename "${GITHUB_REPOSITORY}")
 [[ -z ${INPUT_PROJECTNAME} ]] && SONAR_PROJECTNAME="${REPOSITORY_NAME}" || SONAR_PROJECTNAME="${INPUT_PROJECTNAME}"
 [[ -z ${INPUT_PROJECTVERSION} ]] && SONAR_PROJECTVERSION="" || SONAR_PROJECTVERSION="${INPUT_PROJECTVERSION}"
 
+if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
+
+
+	if [[ "${EVENT_ACTION}" != "opened" ]]; then
+		sonar-scanner \
+			-Dsonar.host.url=${INPUT_HOST} \
+			-Dsonar.projectKey=${SONAR_PROJECTKEY} \
+			-Dsonar.projectName=${SONAR_PROJECTNAME} \
+			-Dsonar.projectVersion=${SONAR_PROJECTVERSION} \
+			-Dsonar.projectBaseDir=${INPUT_PROJECTBASEDIR} \
+			-Dsonar.login=${INPUT_LOGIN} \
+			-Dsonar.password=${INPUT_PASSWORD} \
+			-Dsonar.sources=. \
+			-Dsonar.sourceEncoding=UTF-8 \
+			-Dsonar.key=${GITHUB_EVENT_NUMBER} \
+			-Dsonar.branch=${GITHUB_REF}
+
+	fi
+else
 sonar-scanner \
 	-Dsonar.host.url=${INPUT_HOST} \
 	-Dsonar.projectKey=${SONAR_PROJECTKEY} \
@@ -26,4 +38,10 @@ sonar-scanner \
 	-Dsonar.login=${INPUT_LOGIN} \
 	-Dsonar.password=${INPUT_PASSWORD} \
 	-Dsonar.sources=. \
-	-Dsonar.sourceEncoding=UTF-8
+	-Dsonar.sourceEncoding=UTF-8 \
+	-Dsonar.branch.name=${GITHUB_REF}
+
+fi
+
+
+
