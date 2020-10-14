@@ -23,8 +23,7 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
 
 	if [[ "${EVENT_ACTION}" != "opened" ]]; then
-		# pr_id = ${GITHUB_REF#$pr_prefix}
-		# pr_id = ${GITHUB_REF%$pr_suffix}
+		echo "pull request opened"
 		sonar-scanner \
 			-Dsonar.host.url=${INPUT_HOST} \
 			-Dsonar.projectKey=${SONAR_PROJECTKEY} \
