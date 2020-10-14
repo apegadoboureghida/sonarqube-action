@@ -23,8 +23,8 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
 
 	if [[ "${EVENT_ACTION}" != "opened" ]]; then
-		pr_id = ${GITHUB_REF#$pr_prefix}
-		pr_id = ${GITHUB_REF%$pr_suffix}
+		# pr_id = ${GITHUB_REF#$pr_prefix}
+		# pr_id = ${GITHUB_REF%$pr_suffix}
 		sonar-scanner \
 			-Dsonar.host.url=${INPUT_HOST} \
 			-Dsonar.projectKey=${SONAR_PROJECTKEY} \
@@ -36,11 +36,11 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 			-Dsonar.sources=. \
 			-Dsonar.sourceEncoding=UTF-8 \
 			-Dsonar.key=${GITHUB_EVENT_NUMBER} \
-			-Dsonar.branch.name=$pr_id \
-			-Dsonar.branch.target=${GITHUB_BASE_REF#$prefix} \
+			-Dsonar.branch.name=${GITHUB_HEAD_REF} \
+			-Dsonar.branch.target=${GITHUB_BASE_REF} \
 			-Dsonar.pullrequest.base=${BASE_BRANCH} \
 			-Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} \
-			-Dsonar.pullrequest.key=$pr_id
+			-Dsonar.pullrequest.key=${GITHUB_REF#$pr_prefix}
 	fi
 else
 sonar-scanner \
