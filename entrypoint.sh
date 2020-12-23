@@ -23,8 +23,8 @@ echo "${EVENT_ACTION}"
 if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 	echo "Fire 1"
 	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
-
-	if [[ "${EVENT_ACTION}" != "opened" ]]; then
+	echo "${EVENT_ACTION}"
+	if [[ "${EVENT_ACTION}" == "opened" ]]; then
 		echo "Fire 2"
 		id=${GITHUB_REF}
 		id=${id#$pr_prefix}
