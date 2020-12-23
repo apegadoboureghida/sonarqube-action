@@ -49,8 +49,7 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 			-Dsonar.branch.target=${GITHUB_BASE_REF} \
 			-Dsonar.pullrequest.base=${BASE_BRANCH} \
 			-Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} \
-			-Dsonar.pullrequest.key=${id} \
-			-Dsonar.analysis.mode=preview
+			-Dsonar.pullrequest.key=${id}
 	fi
 else
 echo "Fire 3"
