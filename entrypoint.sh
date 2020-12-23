@@ -29,10 +29,13 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 		id=${GITHUB_REF}
 		id=${id#$pr_prefix}
 		id=${id%$pr_suffix}
+		
+		sha=$(git rev-parse --short "$GITHUB_SHA")
 		echo "pull request opened"
 		echo "ID: ${id}"
 		echo "Branch: ${GITHUB_HEAD_REF}"
 		echo "Base: ${GITHUB_BASE_REF}"
+		echo "SHA:" ${sha}
 
 		sonar-scanner \
 			-Dsonar.host.url=${INPUT_HOST} \
@@ -49,7 +52,8 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 			-Dsonar.branch.target=${GITHUB_BASE_REF} \
 			-Dsonar.pullrequest.base=${BASE_BRANCH} \
 			-Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} \
-			-Dsonar.pullrequest.key=${id}
+			-Dsonar.pullrequest.key=${id} \
+			-Dsonar.scm.revision=${sha}
 	fi
 else
 echo "Fire 3"
