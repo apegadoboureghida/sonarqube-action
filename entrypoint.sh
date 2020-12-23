@@ -30,7 +30,7 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 		id=${id#$pr_prefix}
 		id=${id%$pr_suffix}
 		
-		sha=$(git rev-parse --short "$GITHUB_SHA")
+		sha=${{ steps.get-latest-commit.outputs.latest_commit_sha }}
 		echo "pull request opened"
 		echo "ID: ${id}"
 		echo "Branch: ${GITHUB_HEAD_REF}"
