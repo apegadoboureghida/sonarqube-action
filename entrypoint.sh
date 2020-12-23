@@ -18,6 +18,7 @@ echo "${BASE_BRANCH}"
 echo "${GITHUB_EVENT_NUMBER}"
 echo "${GITHUB_HEAD_REF}"
 echo "${GITHUB_BASE_REF}"
+echo "${EVENT_ACTION}"
 
 if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 	EVENT_ACTION=$(jq -r ".action" "${GITHUB_EVENT_PATH}")
