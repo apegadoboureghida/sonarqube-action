@@ -49,7 +49,7 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 			-Dsonar.sources=. \
 			-Dsonar.sourceEncoding=UTF-8 \
 			-Dsonar.key=${GITHUB_EVENT_NUMBER} \
-			-Dsonar.pullrequest.base=${BASE_BRANCH} \
+			-Dsonar.pullrequest.base=${GITHUB_BASE_REF} \
 			-Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} \
 			-Dsonar.pullrequest.key=${id} \
 			-Dsonar.scm.revision=${sha}
