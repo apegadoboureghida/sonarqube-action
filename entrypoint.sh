@@ -30,7 +30,7 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 		id=${id#$pr_prefix}
 		id=${id%$pr_suffix}
 		
-		sha=${GITHUB_SHA::8}
+		sha=${GITHUB_SHA}
 		echo "pull request opened"
 		echo "ID: ${id}"
 		echo "Branch: ${GITHUB_HEAD_REF}"
